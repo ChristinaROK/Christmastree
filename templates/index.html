@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 서비스 크리스마스 트리</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .tree-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tree-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ornament {
+            position: absolute;
+            width: 105px;
+            height: 105px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+
+        .ornament:hover {
+            transform: scale(1.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .modal img {
+            max-width: 200px;
+            margin-bottom: 10px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        .service-item {
+            margin: 30px 0;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .service-title {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .service-name {
+            font-size: 1.5em;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        #services-container {
+            padding: 20px;
+        }
+
+        /* 서비스 아이템 사이의 구분선 */
+        .service-item:not(:last-child) {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .service-item a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+        .service-item a:hover {
+            transform: scale(1.05);
+        }
+
+        #modal-content a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+        #modal-content a:hover {
+            transform: scale(1.05);
+        }
+
+        .jin-logo {
+            position: absolute;
+            left: 200px;  /* 왼쪽 여백으로 변경 */
+            bottom: 4 gt00px; /* 아래쪽 여백 */
+            width: 500px; /* 로고 크기 */
+            height: auto;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="tree-container">
+        <img src="{{ url_for('static', filename='tree.jpg') }}" alt="크리스마스 트리" class="tree-image">
+        <img src="{{ url_for('static', filename='jin.png') }}" alt="Jin Logo" class="jin-logo">
+        
+        <!-- 일반 장식구들 -->
+        <div class="ornament" style="top: 20%; right: 38%; background: #e3301c;" 
+            data-single-service='{"category": "이미지 AI", "name": "ImageFX", "logo": "imagefx-logo.png", "url": "https://labs.google/fx/ko/tools/image-fx"}'></div>
+        <div class="ornament" style="top: 35%; right: 41%; background: #31db67;" 
+            data-single-service='{"category": "비디오 AI", "name": "Sora", "logo": "sora-logo.png", "url": "https://openai.com/sora"}'></div>
+        <div class="ornament" style="top: 45%; right: 31%; background: #1279ee;" 
+            data-single-service='{"category": "텍스트 AI", "name": "ChatGPT-o1", "logo": "chatgpt-o1-logo.png", "url": "https://chatgpt.com"}'></div>
+        <div class="ornament" style="top: 65%; right: 38%; background: #eded22fb;" 
+            data-single-service='{"category": "검색 AI", "name": "Perplexity", "logo": "perplexity-logo.png", "url": "https://perplexity.ai"}'></div>
+        <div class="ornament" style="top: 80%; right: 32%; background: #ae00ff;" 
+            data-single-service='{"category": "코드 AI", "name": "Cursor", "logo": "cursor-logo.png", "url": "https://cursor.com"}'></div>
+
+        <!-- 다중 서비스 장식구 - 위치 수정 -->
+        <div class="ornament" style="top: 85%; left: 50%; background: #e63a8a;" 
+            data-multi-services='[
+                {"category": "음성 AI", "name": "ElevenLabs", "logo": "elevenlabs-logo.png", "url": "https://elevenlabs.io/"},
+                {"category": "음악 AI", "name": "SUNO", "logo": "suno-logo.png", "url": "https://www.suno.ai/"},
+                {"category": "PPT AI", "name": "Gamma", "logo": "gamma-logo.png", "url": "https://gamma.app/"}
+            ]'></div>
+    </div>
+
+    <!-- 모달과 오버레이 -->
+    <div class="overlay"></div>
+    <div class="modal">
+        <span class="modal-close">×</span>
+        <div id="modal-content">
+            <!-- 단일 서비스용 컨텐츠 -->
+            <h2 id="modal-category"></h2>
+            <img id="modal-logo" src="" alt="서비스 로고" style="max-width: 200px;">
+            <h3 id="modal-service"></h3>
+        </div>
+        <!-- 다중 서비스용 컨테이너 -->
+        <div id="services-container"></div>
+    </div>
+
+    <script>
+        const ornaments = document.querySelectorAll('.ornament');
+        const modal = document.querySelector('.modal');
+        const overlay = document.querySelector('.overlay');
+        const modalClose = document.querySelector('.modal-close');
+
+        ornaments.forEach(ornament => {
+            ornament.addEventListener('click', () => {
+                const multiServices = ornament.dataset.multiServices;
+                const singleService = ornament.dataset.singleService;
+                
+                if (multiServices) {
+                    // 다중 서비스 장식구 처리
+                    const services = JSON.parse(multiServices);
+                    const container = document.getElementById('services-container');
+                    document.getElementById('modal-content').style.display = 'none';
+                    container.style.display = 'block';
+                    container.innerHTML = '';
+                    
+                    services.forEach(service => {
+                        container.innerHTML += `
+                            <div class="service-item">
+                                <div class="service-title">${service.category}</div>
+                                <a href="${service.url}" target="_blank">
+                                    <img src="/static/${service.logo}" alt="${service.name} 로고" style="max-width: 200px; margin: 10px 0;">
+                                    <div class="service-name">${service.name}</div>
+                                </a>
+                            </div>
+                        `;
+                    });
+                } else if (singleService) {
+                    // 단일 서비스 장식구 처리
+                    const service = JSON.parse(singleService);
+                    document.getElementById('modal-content').style.display = 'block';
+                    document.getElementById('services-container').style.display = 'none';
+                    document.getElementById('modal-category').textContent = service.category;
+                    document.getElementById('modal-content').innerHTML = `
+                        <h2 id="modal-category">${service.category}</h2>
+                        <a href="${service.url}" target="_blank">
+                            <img src="/static/${service.logo}" alt="${service.name} 로고" style="max-width: 200px;">
+                            <h3 id="modal-service">${service.name}</h3>
+                        </a>
+                    `;
+                }
+                
+                modal.style.display = 'block';
+                overlay.style.display = 'block';
+            });
+        });
+
+        // 모달 닫기 이벤트
+        modalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        overlay.addEventListener('click', () => {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+    </script>
+</body>
+</html> 
